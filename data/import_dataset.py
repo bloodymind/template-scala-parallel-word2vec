@@ -1,25 +1,44 @@
+"""
+Import sample data for word2vec engine
+"""
+
 import predictionio
-import fileinput
+import argparse
 import csv
 
-client = predictionio.EventClient(
-    access_key = "Mgd6ZwXAeOVW7cTcOX9BnA9UOD8M2397ShGGjmLS5j5cC6olr0yLpBw7WSivM3ej",
-    url = "http://localhost:7070",
-    threads = 8,
-    qsize = 500
-)
+def import_events(client, file):
+  f = open(file, 'r')
+  reader = csv.DictReader(f, delimiter=",", quotechar='"')
+  count = 0
 
-reader = csv.DictReader(fileinput.input(), delimiter=",", quotechar='"')
-for row in reader:
-    client.acreate_event(
-        event = "tweet",
-        entity_type = "source",
-        entity_id = row["SentimentSource"],
-        properties = {
-            "sentiment": row["Sentiment"],
-            "text": row["SentimentText"]
-        }
-    )
+  print "Importing data..."
+  for row in reader:
+      client.acreate_event(
+          event = "tweet",
+          entity_type = "source",
+          entity_id = row["SentimentSource"],
+          properties = {
+              "sentiment": row["Sentiment"],
+              "text": row["SentimentText"]
+          }
+      )
+      ++count
+  f.close()
+  print "%s events are imported." % count
 
-client.close()
+if __name__ == '__main__':
+  parser = argparse.ArgumentParser(
+    description="Import sample data for recommendation engine")
+  parser.add_argument('--access_key', default='invald_access_key')
+  parser.add_argument('--url', default="http://localhost:7070")
+  parser.add_argument('--file', default="./data/dataset.csv")
 
+  args = parser.parse_args()
+  print args
+
+  client = predictionio.EventClient(
+    access_key=args.access_key,
+    url=args.url,
+    threads=5,
+    qsize=500)
+  import_events(client, args.file)

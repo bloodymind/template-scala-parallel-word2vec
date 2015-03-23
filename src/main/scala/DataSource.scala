@@ -17,28 +17,28 @@ class DataSource(val dsp: DataSourceParams)
   override
   def readTraining(sc: SparkContext): TrainingData = {
     val eventsDb = Storage.getPEvents()
+
     val tweets = eventsDb
+      // Find all tweets in the database.
       .find(
         appId = dsp.appId,
         entityType = Some("source"),
         eventNames = Some(List("tweet"))
       )(sc)
+
+      // Retrieve just the text.
       .map(e => Tweet(
-      e.properties.get[String]("text"),
-      e.properties.get[String]("sentiment")
-    ))
+        e.properties.get[String]("text")
+      ))
 
     new TrainingData(tweets)
   }
 }
 
-case class Tweet(text: String,
-                 sentiment: String)
-  extends Serializable
+case class Tweet(
+  text: String
+) extends Serializable
 
-class TrainingData(val tweets: RDD[Tweet])
-  extends Serializable with SanityCheck {
-  override def sanityCheck(): Unit = {
-    assert(tweets.count() > 0)
-  }
-}
+class TrainingData(
+  val tweets: RDD[Tweet]
+) extends Serializable
