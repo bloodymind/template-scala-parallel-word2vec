@@ -7,7 +7,7 @@ name := "template-scala-parallel-word2vec"
 organization := "io.prediction"
 
 libraryDependencies ++= Seq(
-  "io.prediction"     %% "core"           % "0.9.0" % "provided",
+  "io.prediction"     %% "core"           % pioVersion.value % "provided",
   "org.apache.spark"  %% "spark-core"     % "1.2.0" % "provided",
   "org.deeplearning4j" % "deeplearning4j-nlp"  % "0.0.3.3"
     exclude("javax.jms", "jms")

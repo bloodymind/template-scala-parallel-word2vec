@@ -2,6 +2,7 @@
 pio.log
 manifest.json
 data/dataset.csv
+pio.sbt
 
 # Created by https://www.gitignore.io
 
