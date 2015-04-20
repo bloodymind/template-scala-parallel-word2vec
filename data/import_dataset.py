@@ -22,7 +22,7 @@ def import_events(client, file):
               "text": row["SentimentText"]
           }
       )
-      ++count
+      count+=1
   f.close()
   print "%s events are imported." % count
 
